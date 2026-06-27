@@ -1,0 +1,26 @@
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Logs
+*.log
+
+# Local backups / temporary files
+*.save
+*.save.*
+*.bak
+*.bak_*
+
+# Vector DB backups
+backend/data/chroma_db/faiss_index.bak_*/
+
+# Editor / OS
+.vscode/
+.DS_Store
