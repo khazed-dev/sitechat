@@ -201,7 +201,7 @@ class SiteQuickPromptsConfig(BaseModel):
         default_factory=lambda: [
             QuickPrompt(text="Tìm sản phẩm phù hợp", icon="💡"),
             QuickPrompt(text="How do I get started?", icon="🚀"),
-            QuickPrompt(text="Giới thiệu về Euro Hardware", icon="💰")
+            QuickPrompt(text="Giới thiệu về Công ty chúng tôi", icon="💰")
         ],
         description="List of quick prompts"
     )

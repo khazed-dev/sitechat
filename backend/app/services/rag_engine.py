@@ -190,12 +190,9 @@ class RAGEngine:
                 
                 # Use Q&A pair directly
                 answer = clean_model_output(qa_pair["answer"])
-                sources = [SourceDocument(
-                    url=f"qa://{qa_pair['id']}",
-                    title="Trained Q&A Response",
-                    content_preview=qa_pair["question"][:200],
-                    relevance_score=qa_score
-                )]
+                # Trained Q&A is an administrator-authored answer, not an
+                # external citation. Keep it out of customer-facing sources.
+                sources = []
                 confidence = min(0.98, qa_score + 0.05)
                 
                 # Increment Q&A use count
