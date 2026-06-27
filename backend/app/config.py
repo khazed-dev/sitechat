@@ -92,7 +92,9 @@ class Settings(BaseSettings):
     # Embeddings Provider Configuration
     # ===========================================
     EMBEDDINGS_PROVIDER: Literal["ollama", "openai", "huggingface"] = "huggingface"
-    EMBEDDINGS_MODEL: str = "all-MiniLM-L6-v2"
+    EMBEDDINGS_MODEL: str = "BAAI/bge-m3"
+    EMBEDDINGS_DEVICE: str = "cpu"
+    EMBEDDINGS_BATCH_SIZE: int = 8
     
     # ===========================================
     # Vector Store Provider Configuration
@@ -194,14 +196,23 @@ class Settings(BaseSettings):
     # ===========================================
     # RAG settings
     # ===========================================
-    CHUNK_SIZE: int = 1000
-    CHUNK_OVERLAP: int = 200
+    CHUNK_SIZE: int = 700
+    CHUNK_OVERLAP: int = 120
     # Fewer chunks = less prompt text = faster LLM (raise for richer answers)
-    RETRIEVAL_K: int = 3
+    RETRIEVAL_K: int = 4
     # Vector search returns k * oversample candidates before grading (2 = faster than 4)
-    RAG_RETRIEVAL_OVERSAMPLE: int = 2
+    RAG_RETRIEVAL_OVERSAMPLE: int = 3
+    # Blend dense retrieval with lexical matching. Useful for product/SKU queries.
+    RAG_HYBRID_SEARCH: bool = True
+    RAG_DENSE_WEIGHT: float = 0.65
+    RAG_KEYWORD_WEIGHT: float = 0.35
+    # For small demo corpora, scanning this many FAISS documents gives correct
+    # per-site filtering before final top-k selection.
+    RAG_MAX_CANDIDATES: int = 2000
+    # BGE-M3 embeddings are normalized; FAISS returns squared L2 distance.
+    RAG_MAX_DENSE_DISTANCE: float = 1.25
     # Max characters per retrieved chunk in the chat prompt (lower = faster)
-    RAG_CONTEXT_CHUNK_MAX_CHARS: int = 900
+    RAG_CONTEXT_CHUNK_MAX_CHARS: int = 800
     # Recent messages included in prompt; each message truncated for speed
     CHAT_HISTORY_MAX_MESSAGES: int = 4
     CHAT_HISTORY_MESSAGE_MAX_CHARS: int = 350

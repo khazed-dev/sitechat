@@ -122,7 +122,7 @@ async def crawl_and_index_site(url: str, site_id: str, max_pages: int = 50):
             logger.warning(f"No pages found for site: {url} - {error_msg}")
             return
         
-        stats = await indexer.index_pages(pages, job_id=job_id)
+        stats = await indexer.index_pages(pages, job_id=job_id, site_id=site_id)
         
         await mongodb.update_crawl_job(
             job_id,

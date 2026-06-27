@@ -176,22 +176,13 @@ class RAGEngine:
                 logger.info(f"Filtering by site: {site_url_filter}")
         
         try:
-            # 1–3. Overlap I/O: history + Q&A match, and optionally vector retrieval (speculative prefetch).
-            rewritten_query = message
-            prefetch = getattr(settings, "CHAT_SPECULATIVE_PREFETCH", True)
-
-            if prefetch:
-                history, qa_match, retrieved_docs = await asyncio.gather(
-                    mongodb.get_conversation_history(session_id),
-                    self._check_qa_match(rewritten_query, site_id),
-                    self._retrieve_documents(rewritten_query, site_url_filter=site_url_filter),
-                )
-            else:
-                history, qa_match = await asyncio.gather(
-                    mongodb.get_conversation_history(session_id),
-                    self._check_qa_match(rewritten_query, site_id),
-                )
-                retrieved_docs = None
+            # Load history and trained Q&A concurrently, then make follow-up
+            # questions standalone before retrieval.
+            history, qa_match = await asyncio.gather(
+                mongodb.get_conversation_history(session_id),
+                self._check_qa_match(message, site_id),
+            )
+            retrieved_docs = None
 
             if qa_match:
                 qa_pair, qa_score = qa_match
@@ -236,9 +227,14 @@ class RAGEngine:
                     session_id=session_id
                 )
             
-            # 4. No Q&A match - use prefetched retrieval or fetch now
+            # 4. No Q&A match - rewrite follow-ups and retrieve documents.
+            rewritten_query = await self._rewrite_query(message, history)
             if retrieved_docs is None:
-                retrieved_docs = await self._retrieve_documents(rewritten_query, site_url_filter=site_url_filter)
+                retrieved_docs = await self._retrieve_documents(
+                    rewritten_query,
+                    site_url_filter=site_url_filter,
+                    site_id=site_id,
+                )
             
             # 5. Grade documents for relevance
             relevant_docs = await self._grade_documents(rewritten_query, retrieved_docs)
@@ -307,10 +303,12 @@ class RAGEngine:
                 site_name = site.get("name") or site_url_filter.replace("https://", "").replace("http://", "")
 
         try:
-            rewritten_query = message
-            history, retrieved_docs = await asyncio.gather(
-                mongodb.get_conversation_history(session_id),
-                self._retrieve_documents(rewritten_query, site_url_filter=site_url_filter),
+            history = await mongodb.get_conversation_history(session_id)
+            rewritten_query = await self._rewrite_query(message, history)
+            retrieved_docs = await self._retrieve_documents(
+                rewritten_query,
+                site_url_filter=site_url_filter,
+                site_id=site_id,
             )
             relevant_docs = await self._grade_documents(rewritten_query, retrieved_docs)
             context, sources = self._build_context(relevant_docs)
@@ -385,7 +383,8 @@ Rewritten search query (just the query, no explanation):"""
         self,
         query: str,
         k: int = None,
-        site_url_filter: str = None
+        site_url_filter: str = None,
+        site_id: str = None,
     ) -> List[Tuple[Document, float]]:
         """Retrieve relevant documents using hybrid search (runs in a thread pool so it can overlap I/O)."""
         k_val = k or settings.RETRIEVAL_K
@@ -394,7 +393,20 @@ Rewritten search query (just the query, no explanation):"""
         sf = site_url_filter
 
         def _sync_retrieve() -> List[Tuple[Document, float]]:
-            results = vs.similarity_search_with_score(query, k=k_val * oversample)
+            metadata_filter = {"site_id": site_id} if site_id else None
+            use_hybrid = (
+                getattr(settings, "RAG_HYBRID_SEARCH", True)
+                and hasattr(vs, "hybrid_search_with_score")
+            )
+            if use_hybrid:
+                results = vs.hybrid_search_with_score(
+                    query,
+                    k=k_val * oversample,
+                    filter=metadata_filter,
+                    url_prefix=sf,
+                )
+            else:
+                results = vs.similarity_search_with_score(query, k=k_val * oversample)
             if sf:
                 filtered_results = []
                 for doc, score in results:
@@ -418,21 +430,36 @@ Rewritten search query (just the query, no explanation):"""
             return []
         
         graded = []
-        
-        for doc, score in docs:
-            # Simple relevance check based on score threshold
-            # Lower score = more relevant for Chroma
-            if score < 1.5:  # Threshold
-                graded.append((doc, score))
+        query_terms = set(re.findall(r"[\w-]+", query.lower(), flags=re.UNICODE))
+        best_score = min(score for _, score in docs)
+
+        for index, (doc, score) in enumerate(docs):
+            doc_text = f"{doc.metadata.get('title', '')} {doc.page_content}".lower()
+            overlap_ratio = (
+                sum(1 for term in query_terms if term in doc_text) / len(query_terms)
+                if query_terms
+                else 0.0
+            )
+
+            if doc.metadata.get("_retrieval") == "hybrid":
+                dense_score = doc.metadata.get("_dense_score")
+                keyword_score = float(doc.metadata.get("_keyword_score") or 0.0)
+                keep = (
+                    keyword_score > 0
+                    or (dense_score is not None and dense_score <= settings.RAG_MAX_DENSE_DISTANCE)
+                    or overlap_ratio >= 0.25
+                )
             else:
-                # Check if any query terms appear in document
-                query_terms = set(query.lower().split())
-                doc_text = doc.page_content.lower()
-                
-                overlap = sum(1 for term in query_terms if term in doc_text)
-                if overlap >= len(query_terms) * 0.3:  # 30% overlap
-                    graded.append((doc, score))
-        
+                # Dense distance scales differ by embedding model, so compare
+                # with the best hit instead of using MiniLM's fixed threshold.
+                keep = (
+                    (score <= settings.RAG_MAX_DENSE_DISTANCE and score <= best_score + 0.45)
+                    or overlap_ratio >= 0.3
+                )
+
+            if keep:
+                graded.append((doc, score))
+
         return graded
     
     def _build_context(
@@ -461,11 +488,25 @@ Rewritten search query (just the query, no explanation):"""
                     url=url,
                     title=doc.metadata.get("title", "Unknown"),
                     content_preview=doc.page_content[:200] + "...",
-                    relevance_score=max(0, min(1, 1 - score / 2))  # Normalize score
+                    relevance_score=self._normalized_relevance(doc, score),
                 ))
         
         context = "\n\n---\n\n".join(context_parts)
         return context, sources
+
+    @staticmethod
+    def _normalized_relevance(doc: Document, score: float) -> float:
+        """Normalize model-specific retrieval signals for UI/confidence."""
+        if doc.metadata.get("_retrieval") == "hybrid":
+            dense_score = doc.metadata.get("_dense_score")
+            semantic = (
+                max(0, min(1, 1 - float(dense_score) / 2))
+                if dense_score is not None
+                else 0.0
+            )
+            keyword_bonus = 0.15 if doc.metadata.get("_keyword_score", 0) else 0.0
+            return min(1.0, semantic + keyword_bonus)
+        return max(0, min(1, 1 - score / 2))
     
     def _get_system_prompt(self, site_name: str = None) -> str:
         """Get the system prompt for the chatbot (kept compact for lower latency)."""
@@ -583,8 +624,7 @@ Return only the questions, one per line, no numbering:"""
         if not docs:
             return 0.3  # Low confidence with no sources
         
-        # Average normalized scores
-        scores = [max(0, min(1, 1 - score / 2)) for _, score in docs]
+        scores = [self._normalized_relevance(doc, score) for doc, score in docs]
         avg_score = sum(scores) / len(scores)
         
         # Boost confidence if we have multiple sources

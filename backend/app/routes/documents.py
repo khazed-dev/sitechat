@@ -177,7 +177,7 @@ async def index_documents(documents: List[dict], site_id: str):
             }]
             
             # Index the document
-            stats = await indexer.index_pages(pages)
+            stats = await indexer.index_pages(pages, site_id=site_id)
             
             # Update document status
             await mongodb.db.documents.update_one(

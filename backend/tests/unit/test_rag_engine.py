@@ -25,6 +25,7 @@ def mock_vector_store_rag():
     """Mock vector store for document retrieval."""
     mock = MagicMock()
     mock.similarity_search_with_score = MagicMock(return_value=[])
+    mock.hybrid_search_with_score = MagicMock(return_value=[])
     return mock
 
 
@@ -68,7 +69,7 @@ def sample_history():
 @pytest.fixture
 def rag_engine(mock_ollama_service, mock_vector_store_rag):
     """Create RAGEngine instance with mocked dependencies."""
-    with patch("app.services.rag_engine.get_ollama_service", return_value=mock_ollama_service), \
+    with patch("app.services.rag_engine.get_llm_service", return_value=mock_ollama_service), \
          patch("app.services.rag_engine.get_vector_store", return_value=mock_vector_store_rag):
         engine = RAGEngine()
         return engine
@@ -144,17 +145,17 @@ class TestRetrieveDocuments:
     @pytest.mark.asyncio
     async def test_retrieve_documents_basic(self, rag_engine, mock_vector_store_rag, sample_documents):
         """Should retrieve documents from vector store."""
-        mock_vector_store_rag.similarity_search_with_score.return_value = sample_documents
+        mock_vector_store_rag.hybrid_search_with_score.return_value = sample_documents
         
         result = await rag_engine._retrieve_documents("What does this app do?")
         
         assert len(result) <= 5  # Default k
-        mock_vector_store_rag.similarity_search_with_score.assert_called_once()
+        mock_vector_store_rag.hybrid_search_with_score.assert_called_once()
     
     @pytest.mark.asyncio
     async def test_retrieve_documents_with_site_filter(self, rag_engine, mock_vector_store_rag, sample_documents):
         """Should filter documents by site URL."""
-        mock_vector_store_rag.similarity_search_with_score.return_value = sample_documents
+        mock_vector_store_rag.hybrid_search_with_score.return_value = sample_documents
         
         result = await rag_engine._retrieve_documents(
             "What does this app do?",
@@ -172,7 +173,7 @@ class TestRetrieveDocuments:
             (Document(page_content="Content 2", metadata={"url": "https://site2.com/page2"}), 0.6),
             (Document(page_content="Content 3", metadata={"url": "https://site1.com/page3"}), 0.7),
         ]
-        mock_vector_store_rag.similarity_search_with_score.return_value = mixed_docs
+        mock_vector_store_rag.hybrid_search_with_score.return_value = mixed_docs
         
         result = await rag_engine._retrieve_documents(
             "test query",
@@ -186,7 +187,7 @@ class TestRetrieveDocuments:
     @pytest.mark.asyncio
     async def test_retrieve_documents_empty_result(self, rag_engine, mock_vector_store_rag):
         """Should handle empty results gracefully."""
-        mock_vector_store_rag.similarity_search_with_score.return_value = []
+        mock_vector_store_rag.hybrid_search_with_score.return_value = []
         
         result = await rag_engine._retrieve_documents("obscure query")
         
@@ -200,7 +201,7 @@ class TestRetrieveDocuments:
             (Document(page_content="Doc 2", metadata={"url": "http://b.com"}), 0.3),
             (Document(page_content="Doc 3", metadata={"url": "http://c.com"}), 0.8),
         ]
-        mock_vector_store_rag.similarity_search_with_score.return_value = unsorted_docs
+        mock_vector_store_rag.hybrid_search_with_score.return_value = unsorted_docs
         
         result = await rag_engine._retrieve_documents("test query")
         
@@ -254,17 +255,17 @@ class TestGradeDocuments:
         assert len(result) == 1
     
     @pytest.mark.asyncio
-    async def test_grade_documents_threshold_boundary(self, rag_engine):
-        """Documents at threshold boundary should be included."""
+    async def test_grade_documents_uses_bge_distance_and_relative_window(self, rag_engine):
+        """Dense fallback should use the normalized BGE distance configuration."""
         docs = [
-            (Document(page_content="Some content"), 1.4),  # Below threshold
-            (Document(page_content="Other content"), 1.5),  # At threshold
-            (Document(page_content="More content"), 1.6),  # Above threshold, no overlap
+            (Document(page_content="Some content"), 1.2),
+            (Document(page_content="Other content"), 1.5),
+            (Document(page_content="More content"), 1.6),
         ]
         
         result = await rag_engine._grade_documents("unrelated query", docs)
         
-        assert len(result) == 1  # Only first doc passes
+        assert len(result) == 1
 
 
 # ==================== _build_context Tests ====================
@@ -498,7 +499,7 @@ class TestRAGEngineIntegration:
     
     def test_get_rag_engine_singleton(self, mock_ollama_service, mock_vector_store_rag):
         """get_rag_engine should return singleton instance."""
-        with patch("app.services.rag_engine.get_ollama_service", return_value=mock_ollama_service), \
+        with patch("app.services.rag_engine.get_llm_service", return_value=mock_ollama_service), \
              patch("app.services.rag_engine.get_vector_store", return_value=mock_vector_store_rag), \
              patch("app.services.rag_engine._rag_engine", None):
             

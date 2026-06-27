@@ -25,7 +25,8 @@ class IndexerService:
     async def index_pages(
         self,
         pages: List[Dict],
-        job_id: str = None
+        job_id: str = None,
+        site_id: str = None,
     ) -> Dict:
         """
         Index a list of crawled pages.
@@ -47,11 +48,15 @@ class IndexerService:
         for page in pages:
             try:
                 # Create chunks
-                chunks = self._create_chunks(page)
+                chunks = self._create_chunks(page, site_id=site_id)
                 
                 if not chunks:
                     continue
                 
+                # Crawling the same URL again must replace its old chunks rather
+                # than silently duplicating them in FAISS.
+                vector_store.delete_by_metadata({"url": page["url"]})
+
                 # Add to vector store
                 vector_store.add_documents(chunks)
                 
@@ -91,7 +96,7 @@ class IndexerService:
         logger.info(f"Indexing complete: {stats}")
         return stats
     
-    def _create_chunks(self, page: Dict) -> List[Document]:
+    def _create_chunks(self, page: Dict, site_id: str = None) -> List[Document]:
         """Create document chunks from a page."""
         content = page.get("content", "")
         
@@ -99,22 +104,29 @@ class IndexerService:
             return []
         
         # Split content into chunks
+        title = (page.get("title") or "").strip()
         texts = self.text_splitter.split_text(content)
+        page_metadata = page.get("metadata", {}) or {}
+        effective_site_id = site_id or page.get("site_id") or page_metadata.get("site_id")
         
         # Create Document objects with metadata
         documents = []
         for i, text in enumerate(texts):
-            doc = Document(
-                page_content=text,
-                metadata={
+            # Repeating the title in each chunk materially improves retrieval for
+            # product pages where the model/SKU often appears only in the heading.
+            embedding_text = f"{title}\n\n{text}" if title and title.lower() not in text[:200].lower() else text
+            metadata = {
                     "url": page["url"],
-                    "title": page["title"],
+                    "title": title,
                     "chunk_index": i,
                     "total_chunks": len(texts),
                     "source": page["url"],
-                    "word_count": len(text.split())
+                    "word_count": len(text.split()),
+                    **page_metadata,
                 }
-            )
+            if effective_site_id:
+                metadata["site_id"] = effective_site_id
+            doc = Document(page_content=embedding_text, metadata=metadata)
             documents.append(doc)
         
         return documents

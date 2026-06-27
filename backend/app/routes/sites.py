@@ -94,7 +94,7 @@ async def delete_site(site_id: str, user: dict = Depends(require_auth)):
         
         try:
             vector_store = get_vector_store()
-            await vector_store.delete_by_metadata({"source_url": {"$regex": f"^{url}"}})
+            vector_store.delete_by_metadata({"site_id": site_id})
         except Exception as e:
             logger.warning(f"Could not delete vectors for site {url}: {e}")
         
