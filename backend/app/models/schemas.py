@@ -122,7 +122,10 @@ class SiteAppearanceConfig(BaseModel):
     """Appearance configuration for the chatbot widget."""
     primary_color: str = Field(default="#0D9488", description="Primary color (hex)")
     chat_title: str = Field(default="Chat with us", description="Chat widget title")
-    welcome_message: str = Field(default="Hi! How can I help you today?", description="Welcome message")
+    welcome_message: str = Field(
+        default="Bạn đang cần tìm sản phẩm hoặc tư vấn giải pháp nào?",
+        description="Welcome message",
+    )
     bot_avatar_url: Optional[str] = Field(default=None, description="Custom bot avatar URL")
     position: str = Field(default="bottom-right", description="Widget position: bottom-left or bottom-right")
     # White-label options
@@ -196,9 +199,9 @@ class SiteQuickPromptsConfig(BaseModel):
     enabled: bool = Field(default=True, description="Show quick prompts in widget")
     prompts: List[QuickPrompt] = Field(
         default_factory=lambda: [
-            QuickPrompt(text="What can you help me with?", icon="💡"),
+            QuickPrompt(text="Tìm sản phẩm phù hợp", icon="💡"),
             QuickPrompt(text="How do I get started?", icon="🚀"),
-            QuickPrompt(text="Tell me about pricing", icon="💰")
+            QuickPrompt(text="Giới thiệu về Euro Hardware", icon="💰")
         ],
         description="List of quick prompts"
     )

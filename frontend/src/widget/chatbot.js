@@ -51,7 +51,7 @@
     position: scriptEl?.dataset?.position || "bottom-right",
     primaryColor: scriptEl?.dataset?.primaryColor || "#1B5E3B",
     title: scriptEl?.dataset?.title || "Ask AI",
-    welcomeMessage: "Hi! How can I help you today?",
+    welcomeMessage: "Bạn đang cần tìm sản phẩm hoặc tư vấn giải pháp nào?",
     showSources: true,
     hideBranding: false,
     customBrandingText: null,
@@ -203,6 +203,7 @@
     const G = document["querySelector"](".sitechat-header-text h3");
     if (G) G["textContent"] = config.title;
     const H = document["querySelector"](".sitechat-welcome h4"), I = document["querySelector"](".sitechat-welcome p");
+    if (H) H["textContent"] = "Xin chào! 👋";
     if (I) I["textContent"] = config.welcomeMessage;
   }
   function updateBrandingFooter() {
@@ -598,7 +599,7 @@
       if (G) {
         G["classList"]["remove"]("handoff-mode");
         const I = G["querySelector"](".sitechat-header-text p");
-        if (I) I["textContent"] = "Powered by AI";
+        if (I) I["textContent"] = "Trợ lý tư vấn AI";
       }
       const H = document["querySelector"](".sitechat-handoff-btn");
       if (H) H["style"]["display"] = "";
@@ -639,6 +640,26 @@
   const widgetRoot = document["createElement"]("div");
   widgetRoot["className"] = "sitechat-widget", widgetRoot["innerHTML"] = '\n    <button class="sitechat-toggle" aria-label="Toggle chat">\n      <svg class="sitechat-icon-chat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">\n        <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2v10z"/>\n      </svg>\n      <svg class="sitechat-icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">\n        <line x1="18" y1="6" x2="6" y2="18"/>\n        <line x1="6" y1="6" x2="18" y2="18"/>\n      </svg>\n    </button>\n    \n    <div class="sitechat-window">\n      <div class="sitechat-header">\n        <div class="sitechat-header-icon">\n          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">\n            <path d="M12 2L2 7l10 5 10-5-10-5z"/>\n            <path d="M2 17l10 5 10-5"/>\n            <path d="M2 12l10 5 10-5"/>\n          </svg>\n        </div>\n        <div class="sitechat-header-text">\n          <h3>' + config.title + '</h3>\n          <p>Powered by AI</p>\n        </div>\n        <div class="sitechat-header-actions" style="display:flex;align-items:center;gap:8px;flex-shrink:0;">\n          <button type="button" class="sitechat-handoff-btn" title="Talk to a live agent" data-state="idle">\n            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">\n              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>\n              <circle cx="9" cy="7" r="4"/>\n              <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>\n              <path d="M16 3.13a4 4 0 0 1 0 7.75"/>\n            </svg>\n            <span class="sitechat-live-agent-label">Live agent</span>\n          </button>\n          <button type="button" class="sitechat-header-close sitechat-close-btn" aria-label="Close chat">\n            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">\n              <line x1="18" y1="6" x2="6" y2="18"/>\n              <line x1="6" y1="6" x2="18" y2="18"/>\n            </svg>\n          </button>\n        </div>\n      </div>\n      \n      <div class="sitechat-messages">\n        <div class="sitechat-welcome">\n          <div class="sitechat-welcome-icon">\n            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">\n              <path d="M12 2L2 7l10 5 10-5-10-5z"/>\n              <path d="M2 17l10 5 10-5"/>\n              <path d="M2 12l10 5 10-5"/>\n            </svg>\n          </div>\n          <h4>Hi there! 👋</h4>\n          <p>I\'m your AI assistant. Ask me anything about this website.</p>\n          <div class="sitechat-welcome-suggestions">\n            <button class="sitechat-suggestion" data-query="What can you help me with?">What can you help me with?</button>\n            <button class="sitechat-suggestion" data-query="Tell me about this website">Tell me about this website</button>\n          </div>\n        </div>\n      </div>\n      \n      <div class="sitechat-input-wrapper">\n        <form class="sitechat-input-form">\n          <input type="text" class="sitechat-input" placeholder="Type your message..." autocomplete="off">\n          <button type="submit" class="sitechat-send" disabled>\n            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">\n              <line x1="22" y1="2" x2="11" y2="13"/>\n              <polygon points="22 2 15 22 11 13 2 9 22 2"/>\n            </svg>\n          </button>\n        </form>\n      </div>\n      \n      <div class="sitechat-branding">\n        <a href="'+ config.apiUrl +'" target="_blank" rel="noopener noreferrer">\n          Powered by <strong>SiteChat</strong>\n        </a>\n      </div>\n    </div>\n  ', 
   document["body"]["appendChild"](widgetRoot), injectResponsiveStyles(), updateBrandingFooter();
+  const headerSubtitle = widgetRoot["querySelector"](".sitechat-header-text p");
+  if (headerSubtitle) headerSubtitle["textContent"] = "Trợ lý tư vấn AI";
+  const handoffLabel = widgetRoot["querySelector"](".sitechat-live-agent-label");
+  if (handoffLabel) handoffLabel["textContent"] = "Gặp nhân viên";
+  const handoffButton = widgetRoot["querySelector"](".sitechat-handoff-btn");
+  if (handoffButton) handoffButton["title"] = "Kết nối với nhân viên tư vấn";
+  const welcomeTitle = widgetRoot["querySelector"](".sitechat-welcome h4");
+  if (welcomeTitle) welcomeTitle["textContent"] = "Xin chào! 👋";
+  const welcomeText = widgetRoot["querySelector"](".sitechat-welcome p");
+  if (welcomeText) welcomeText["textContent"] = config.welcomeMessage;
+  const suggestionButtons = widgetRoot["querySelectorAll"](".sitechat-suggestion");
+  const suggestions = ["Tìm sản phẩm phù hợp", "Giới thiệu về Euro Hardware"];
+  suggestionButtons["forEach"]((button, index) => {
+    if (suggestions[index]) {
+      button["textContent"] = suggestions[index];
+      button["dataset"]["query"] = suggestions[index];
+    }
+  });
+  const messageInput = widgetRoot["querySelector"](".sitechat-input");
+  if (messageInput) messageInput["placeholder"] = "Nhập nội dung cần tư vấn...";
   const toggleBtn = widgetRoot["querySelector"](".sitechat-toggle"),
     windowEl = widgetRoot["querySelector"](".sitechat-window"),
     messagesEl = widgetRoot["querySelector"](".sitechat-messages"),
