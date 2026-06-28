@@ -10,12 +10,12 @@
     if (document.body && document.body.hasAttribute("data-sitechat-dashboard")) {
       return;
     }
-  } catch (e) {}
+  } catch (e) { }
 
   const embedFallback =
     typeof window !== "undefined" &&
-    window.__sitechatEmbed &&
-    typeof window.__sitechatEmbed === "object"
+      window.__sitechatEmbed &&
+      typeof window.__sitechatEmbed === "object"
       ? window.__sitechatEmbed
       : null;
 
@@ -37,7 +37,7 @@
           return window.location.origin;
         }
       }
-    } catch (e) {}
+    } catch (e) { }
     return "http://localhost:8000";
   }
 
@@ -85,11 +85,11 @@
       const G = await fetch(config.apiUrl + "/api/sites/" + config.siteId + "/config");
       if (G["ok"]) {
         const H = await G["json"]();
-        H["appearance"] && (config.primaryColor = H["appearance"]["primary_color"] || config.primaryColor, config.title = H["appearance"]["chat_title"] || config.title, 
-        config.welcomeMessage = H["appearance"]["welcome_message"] || config.welcomeMessage, config.position = H["appearance"]["position"] || config.position, 
-        config.hideBranding = H["appearance"]["hide_branding"] === true, config.customBrandingText = H["appearance"]["custom_branding_text"] || null, 
-        config.customBrandingUrl = H["appearance"]["custom_branding_url"] || null), H["behavior"] && (config.showSources = H["behavior"]["show_sources"] !== false), 
-        injectDynamicThemeStyles(), syncHeaderAndWelcomeText(), updateBrandingFooter();
+        H["appearance"] && (config.primaryColor = H["appearance"]["primary_color"] || config.primaryColor, config.title = H["appearance"]["chat_title"] || config.title,
+          config.welcomeMessage = H["appearance"]["welcome_message"] || config.welcomeMessage, config.position = H["appearance"]["position"] || config.position,
+          config.hideBranding = H["appearance"]["hide_branding"] === true, config.customBrandingText = H["appearance"]["custom_branding_text"] || null,
+          config.customBrandingUrl = H["appearance"]["custom_branding_url"] || null), H["behavior"] && (config.showSources = H["behavior"]["show_sources"] !== false),
+          injectDynamicThemeStyles(), syncHeaderAndWelcomeText(), updateBrandingFooter();
       }
     } catch (I) {
       console["warn"]("Could not fetch site config, using defaults:", I);
@@ -99,8 +99,8 @@
     const G = document["getElementById"]("sitechat-dynamic-styles");
     G && G["remove"]();
     const H = document["createElement"]("style");
-    H["id"] = "sitechat-dynamic-styles", H["textContent"] = "\n      .sitechat-toggle {\n        background: linear-gradient(135deg, " + config.primaryColor + ", " + adjustHexColor(config.primaryColor, -20) + ") !important;\n      }\n      .sitechat-header {\n        background: linear-gradient(135deg, " + config.primaryColor + ", " + adjustHexColor(config.primaryColor, -20) + ") !important;\n      }\n      .sitechat-avatar.bot {\n        background: linear-gradient(135deg, " + config.primaryColor + ", " + adjustHexColor(config.primaryColor, -30) + ") !important;\n        box-shadow: 0 2px 8px " + config.primaryColor + "40 !important;\n      }\n      .sitechat-message.user {\n        background: linear-gradient(135deg, " + config.primaryColor + ", " + adjustHexColor(config.primaryColor, -25) + ") !important;\n        box-shadow: 0 2px 12px " + config.primaryColor + "30 !important;\n      }\n      .sitechat-typing span {\n        background: linear-gradient(135deg, " + config.primaryColor + ", " + adjustHexColor(config.primaryColor, -20) + ") !important;\n      }\n      .sitechat-send {\n        background: linear-gradient(135deg, " + config.primaryColor + ", " + adjustHexColor(config.primaryColor, -20) + ") !important;\n      }\n      .sitechat-welcome-icon {\n        background: linear-gradient(135deg, " + config.primaryColor + "15, " + config.primaryColor + "25) !important;\n      }\n      .sitechat-welcome-icon::before {\n        background: linear-gradient(135deg, " + config.primaryColor + "40, transparent) !important;\n      }\n      .sitechat-welcome-icon svg {\n        color: " + config.primaryColor + " !important;\n      }\n      .sitechat-suggestion:hover {\n        background: " + config.primaryColor + "08 !important;\n        border-color: " + config.primaryColor + "30 !important;\n        color: " + config.primaryColor + " !important;\n      }\n      .sitechat-source-link {\n        color: " + config.primaryColor + " !important;\n        background: linear-gradient(135deg, " + config.primaryColor + "08, " + config.primaryColor + "12) !important;\n        border: 1px solid " + config.primaryColor + "20 !important;\n      }\n      .sitechat-source-link:hover {\n        background: linear-gradient(135deg, " + config.primaryColor + "15, " + config.primaryColor + "20) !important;\n        border-color: " + config.primaryColor + "40 !important;\n        box-shadow: 0 2px 8px " + config.primaryColor + "20 !important;\n      }\n      .sitechat-message.bot code {\n        color: " + config.primaryColor + " !important;\n      }\n      .sitechat-feedback-btn.active {\n        border-color: " + config.primaryColor + "40 !important;\n      }\n    ", 
-    document["head"]["appendChild"](H);
+    H["id"] = "sitechat-dynamic-styles", H["textContent"] = "\n      .sitechat-toggle {\n        background: linear-gradient(135deg, " + config.primaryColor + ", " + adjustHexColor(config.primaryColor, -20) + ") !important;\n      }\n      .sitechat-header {\n        background: linear-gradient(135deg, " + config.primaryColor + ", " + adjustHexColor(config.primaryColor, -20) + ") !important;\n      }\n      .sitechat-avatar.bot {\n        background: linear-gradient(135deg, " + config.primaryColor + ", " + adjustHexColor(config.primaryColor, -30) + ") !important;\n        box-shadow: 0 2px 8px " + config.primaryColor + "40 !important;\n      }\n      .sitechat-message.user {\n        background: linear-gradient(135deg, " + config.primaryColor + ", " + adjustHexColor(config.primaryColor, -25) + ") !important;\n        box-shadow: 0 2px 12px " + config.primaryColor + "30 !important;\n      }\n      .sitechat-typing span {\n        background: linear-gradient(135deg, " + config.primaryColor + ", " + adjustHexColor(config.primaryColor, -20) + ") !important;\n      }\n      .sitechat-send {\n        background: linear-gradient(135deg, " + config.primaryColor + ", " + adjustHexColor(config.primaryColor, -20) + ") !important;\n      }\n      .sitechat-welcome-icon {\n        background: linear-gradient(135deg, " + config.primaryColor + "15, " + config.primaryColor + "25) !important;\n      }\n      .sitechat-welcome-icon::before {\n        background: linear-gradient(135deg, " + config.primaryColor + "40, transparent) !important;\n      }\n      .sitechat-welcome-icon svg {\n        color: " + config.primaryColor + " !important;\n      }\n      .sitechat-suggestion:hover {\n        background: " + config.primaryColor + "08 !important;\n        border-color: " + config.primaryColor + "30 !important;\n        color: " + config.primaryColor + " !important;\n      }\n      .sitechat-source-link {\n        color: " + config.primaryColor + " !important;\n        background: linear-gradient(135deg, " + config.primaryColor + "08, " + config.primaryColor + "12) !important;\n        border: 1px solid " + config.primaryColor + "20 !important;\n      }\n      .sitechat-source-link:hover {\n        background: linear-gradient(135deg, " + config.primaryColor + "15, " + config.primaryColor + "20) !important;\n        border-color: " + config.primaryColor + "40 !important;\n        box-shadow: 0 2px 8px " + config.primaryColor + "20 !important;\n      }\n      .sitechat-message.bot code {\n        color: " + config.primaryColor + " !important;\n      }\n      .sitechat-feedback-btn.active {\n        border-color: " + config.primaryColor + "40 !important;\n      }\n    ",
+      document["head"]["appendChild"](H);
   }
   function injectResponsiveStyles() {
     const G = document["getElementById"]("sitechat-responsive-styles");
@@ -211,12 +211,12 @@
     if (!G) return;
     const H = G["querySelector"]("a");
     if (config.hideBranding) {
-      config.customBrandingText ? (G["style"]["display"] = "block", H && (H["innerHTML"] = config.customBrandingText, config.customBrandingUrl ? (H["href"] = config.customBrandingUrl, 
-      H["style"]["cursor"] = "pointer") : (H["removeAttribute"]("href"), H["style"]["cursor"] = "default"))) : G["style"]["display"] = "none";
+      config.customBrandingText ? (G["style"]["display"] = "block", H && (H["innerHTML"] = config.customBrandingText, config.customBrandingUrl ? (H["href"] = config.customBrandingUrl,
+        H["style"]["cursor"] = "pointer") : (H["removeAttribute"]("href"), H["style"]["cursor"] = "default"))) : G["style"]["display"] = "none";
       return;
     }
-    G["style"]["display"] = "block", H && (H["innerHTML"] = "Powered by <strong>SiteChat</strong>", H["href"] = config.apiUrl, 
-    H["style"]["cursor"] = "pointer");
+    G["style"]["display"] = "block", H && (H["innerHTML"] = "Powered by <strong>SiteChat</strong>", H["href"] = config.apiUrl,
+      H["style"]["cursor"] = "pointer");
   }
   fetchSiteConfig();
 
@@ -238,7 +238,7 @@
           const H = JSON["parse"](G);
           this["pageViews"] = (H["pageViews"] || 0) + 1;
         }
-      } catch (I) {}
+      } catch (I) { }
     },
     saveVisitorData() {
       try {
@@ -246,7 +246,7 @@
           pageViews: this["pageViews"],
           lastVisit: Date["now"]()
         }));
-      } catch (G) {}
+      } catch (G) { }
     },
     incrementPageViews() {
       this["saveVisitorData"]();
@@ -315,14 +315,14 @@
           const J = JSON["parse"](H);
           this["visitorShownTriggerIds"] = new Set(J);
         }
-      } catch (K) {}
+      } catch (K) { }
     },
     saveShownTrigger(G, H) {
       this["shownTriggerIds"]["add"](G);
       try {
-        sessionStorage["setItem"]("sitechat_triggers_" + config.siteId, JSON["stringify"]([ ...this["shownTriggerIds"] ])), H && (this["visitorShownTriggerIds"]["add"](G), 
-        localStorage["setItem"]("sitechat_visitor_triggers_" + config.siteId, JSON["stringify"]([ ...this["visitorShownTriggerIds"] ])));
-      } catch (I) {}
+        sessionStorage["setItem"]("sitechat_triggers_" + config.siteId, JSON["stringify"]([...this["shownTriggerIds"]])), H && (this["visitorShownTriggerIds"]["add"](G),
+          localStorage["setItem"]("sitechat_visitor_triggers_" + config.siteId, JSON["stringify"]([...this["visitorShownTriggerIds"]])));
+      } catch (I) { }
     },
     checkTriggers() {
       if (!this["isInitialized"] || this["triggers"]["length"] === 0) return;
@@ -345,46 +345,46 @@
       return G["conditions"]["every"](I => this["checkCondition"](I, H));
     },
     checkCondition(G, H) {
-      const {type: I, value: J, operator: K} = G;
+      const { type: I, value: J, operator: K } = G;
       switch (I) {
-       case "time":
-        return this["compare"](H["timeOnPage"], J, K);
+        case "time":
+          return this["compare"](H["timeOnPage"], J, K);
 
-       case "scroll":
-        return this["compare"](H["maxScrollDepth"], J, K);
+        case "scroll":
+          return this["compare"](H["maxScrollDepth"], J, K);
 
-       case "exit_intent":
-        return H["exitIntentDetected"] === true;
+        case "exit_intent":
+          return H["exitIntentDetected"] === true;
 
-       case "url":
-        return this["matchUrl"](H["currentUrl"], J, K);
+        case "url":
+          return this["matchUrl"](H["currentUrl"], J, K);
 
-       case "visit_count":
-        return this["compare"](H["pageViews"], J, K);
+        case "visit_count":
+          return this["compare"](H["pageViews"], J, K);
 
-       default:
-        return false;
+        default:
+          return false;
       }
     },
     compare(G, H, I) {
       switch (I) {
-       case "eq":
-        return G === H;
+        case "eq":
+          return G === H;
 
-       case "gte":
-        return G >= H;
+        case "gte":
+          return G >= H;
 
-       case "lte":
-        return G <= H;
+        case "lte":
+          return G <= H;
 
-       case "gt":
-        return G > H;
+        case "gt":
+          return G > H;
 
-       case "lt":
-        return G < H;
+        case "lt":
+          return G < H;
 
-       default:
-        return G >= H;
+        default:
+          return G >= H;
       }
     },
     matchUrl(G, H, I) {
@@ -415,7 +415,7 @@
         await fetch(config.apiUrl + "/api/widget/" + config.siteId + "/triggers/event?" + I, {
           method: "POST"
         });
-      } catch (J) {}
+      } catch (J) { }
     }
   };
   // --- Nudge bubble (proactive triggers) ---
@@ -423,16 +423,16 @@
   function showNudge(G) {
     activeNudgeEl && activeNudgeEl["remove"]();
     const H = document["createElement"]("div");
-    H["className"] = "sitechat-nudge", H["innerHTML"] = '\n      <div class="sitechat-nudge-message">' + escapeHtml(G["message"]) + '</div>\n      <button class="sitechat-nudge-close" aria-label="Dismiss">×</button>\n    ', 
-    H["querySelector"](".sitechat-nudge-close")["addEventListener"]("click", I => {
-      I["stopPropagation"](), H["classList"]["add"]("sitechat-nudge-out"), triggerEngine.logEvent(G["id"], "dismissed"), setTimeout(() => H["remove"](), 300), 
-      activeNudgeEl = null;
-    }), H["addEventListener"]("click", () => {
-      H["remove"](), activeNudgeEl = null, triggerEngine.logEvent(G["id"], "clicked"), chatOpen = true, toggleBtn["classList"]["add"]("open"), windowEl["classList"]["add"]("open"), 
-      inputEl["focus"](), triggerEngine.logEvent(G["id"], "converted");
-    }), document["body"]["appendChild"](H), activeNudgeEl = H, scheduleMobileViewportOffsets(), requestAnimationFrame(() => {
-      H["classList"]["add"]("sitechat-nudge-in");
-    });
+    H["className"] = "sitechat-nudge", H["innerHTML"] = '\n      <div class="sitechat-nudge-message">' + escapeHtml(G["message"]) + '</div>\n      <button class="sitechat-nudge-close" aria-label="Dismiss">×</button>\n    ',
+      H["querySelector"](".sitechat-nudge-close")["addEventListener"]("click", I => {
+        I["stopPropagation"](), H["classList"]["add"]("sitechat-nudge-out"), triggerEngine.logEvent(G["id"], "dismissed"), setTimeout(() => H["remove"](), 300),
+          activeNudgeEl = null;
+      }), H["addEventListener"]("click", () => {
+        H["remove"](), activeNudgeEl = null, triggerEngine.logEvent(G["id"], "clicked"), chatOpen = true, toggleBtn["classList"]["add"]("open"), windowEl["classList"]["add"]("open"),
+          inputEl["focus"](), triggerEngine.logEvent(G["id"], "converted");
+      }), document["body"]["appendChild"](H), activeNudgeEl = H, scheduleMobileViewportOffsets(), requestAnimationFrame(() => {
+        H["classList"]["add"]("sitechat-nudge-in");
+      });
   }
   function escapeHtml(G) {
     const H = document["createElement"]("div");
@@ -478,8 +478,8 @@
         });
         if (J["ok"]) {
           const K = await J["json"]();
-          handoffState.handoffId = K["handoff_id"], handoffState.mode = "pending", this["updateUIForHandoff"](), this["addSystemMessage"]("Connecting you to a human agent. Please wait..."), 
-          this["startPolling"]();
+          handoffState.handoffId = K["handoff_id"], handoffState.mode = "pending", this["updateUIForHandoff"](), this["addSystemMessage"]("Connecting you to a human agent. Please wait..."),
+            this["startPolling"]();
         }
       } catch (L) {
         console["error"]("Failed to request handoff:", L), this["addSystemMessage"]("Sorry, we could not connect you to an agent. Please try again later.");
@@ -497,8 +497,8 @@
     },
     showOfflineForm() {
       const G = '\n        <div class="sitechat-offline-form">\n          <div class="sitechat-offline-icon">\n            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">\n              <circle cx="12" cy="12" r="10"/>\n              <path d="M12 6v6l4 2"/>\n            </svg>\n          </div>\n          <h4>We\'re currently offline</h4>\n          <p>' + escapeHtml(handoffState.offlineMessage || "Leave your email and we'll get back to you.") + '</p>\n          <form class="sitechat-offline-email-form">\n            <input type="email" placeholder="Your email address" required class="sitechat-offline-email">\n            <button type="submit" class="sitechat-offline-submit">Send</button>\n          </form>\n        </div>\n      ', H = document["createElement"]("div");
-      H["className"] = "sitechat-message-wrapper bot", H["innerHTML"] = '\n        <div class="sitechat-avatar bot">\n          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">\n            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>\n            <circle cx="12" cy="7" r="4"/>\n          </svg>\n        </div>\n        <div class="sitechat-message-content">\n          <div class="sitechat-message bot">' + G + "</div>\n        </div>\n      ", 
-      messagesEl["appendChild"](H), messagesEl["scrollTop"] = messagesEl["scrollHeight"];
+      H["className"] = "sitechat-message-wrapper bot", H["innerHTML"] = '\n        <div class="sitechat-avatar bot">\n          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">\n            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>\n            <circle cx="12" cy="7" r="4"/>\n          </svg>\n        </div>\n        <div class="sitechat-message-content">\n          <div class="sitechat-message bot">' + G + "</div>\n        </div>\n      ",
+        messagesEl["appendChild"](H), messagesEl["scrollTop"] = messagesEl["scrollHeight"];
       const I = H["querySelector"](".sitechat-offline-email-form");
       I["addEventListener"]("submit", async J => {
         J["preventDefault"]();
@@ -557,11 +557,11 @@
         const H = await fetch(G);
         if (H["ok"]) {
           const I = await H["json"]();
-          I["status"] === "active" && handoffState.mode !== "active" && (handoffState.mode = "active", handoffState.agentName = I["agent_name"], this["updateUIForHandoff"](), 
-          this["addSystemMessage"]((I["agent_name"] || "An agent") + " has joined the conversation."));
+          I["status"] === "active" && handoffState.mode !== "active" && (handoffState.mode = "active", handoffState.agentName = I["agent_name"], this["updateUIForHandoff"](),
+            this["addSystemMessage"]((I["agent_name"] || "An agent") + " has joined the conversation."));
           if (I["status"] === "resolved") {
-            handoffState.mode = "resolved", this["stopPolling"](), this["addSystemMessage"]("This conversation has been resolved. Thank you!"), 
-            this["resetToAIMode"]();
+            handoffState.mode = "resolved", this["stopPolling"](), this["addSystemMessage"]("This conversation has been resolved. Thank you!"),
+              this["resetToAIMode"]();
             return;
           }
           if (I["status"] === "abandoned") {
@@ -625,7 +625,7 @@
           headers: { "Content-Type": "application/json" },
           body: abandonBody,
           keepalive: true,
-        }).catch(() => {});
+        }).catch(() => { });
       }
     }
   });
@@ -638,12 +638,12 @@
   const baseStyleEl = document["createElement"]("style");
   baseStyleEl["textContent"] = baseWidgetCss, document["head"]["appendChild"](baseStyleEl);
   const widgetRoot = document["createElement"]("div");
-  widgetRoot["className"] = "sitechat-widget", widgetRoot["innerHTML"] = '\n    <button class="sitechat-toggle" aria-label="Toggle chat">\n      <svg class="sitechat-icon-chat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">\n        <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2v10z"/>\n      </svg>\n      <svg class="sitechat-icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">\n        <line x1="18" y1="6" x2="6" y2="18"/>\n        <line x1="6" y1="6" x2="18" y2="18"/>\n      </svg>\n    </button>\n    \n    <div class="sitechat-window">\n      <div class="sitechat-header">\n        <div class="sitechat-header-icon">\n          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">\n            <path d="M12 2L2 7l10 5 10-5-10-5z"/>\n            <path d="M2 17l10 5 10-5"/>\n            <path d="M2 12l10 5 10-5"/>\n          </svg>\n        </div>\n        <div class="sitechat-header-text">\n          <h3>' + config.title + '</h3>\n          <p>Powered by AI</p>\n        </div>\n        <div class="sitechat-header-actions" style="display:flex;align-items:center;gap:8px;flex-shrink:0;">\n          <button type="button" class="sitechat-handoff-btn" title="Talk to a live agent" data-state="idle">\n            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">\n              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>\n              <circle cx="9" cy="7" r="4"/>\n              <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>\n              <path d="M16 3.13a4 4 0 0 1 0 7.75"/>\n            </svg>\n            <span class="sitechat-live-agent-label">Live agent</span>\n          </button>\n          <button type="button" class="sitechat-header-close sitechat-close-btn" aria-label="Close chat">\n            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">\n              <line x1="18" y1="6" x2="6" y2="18"/>\n              <line x1="6" y1="6" x2="18" y2="18"/>\n            </svg>\n          </button>\n        </div>\n      </div>\n      \n      <div class="sitechat-messages">\n        <div class="sitechat-welcome">\n          <div class="sitechat-welcome-icon">\n            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">\n              <path d="M12 2L2 7l10 5 10-5-10-5z"/>\n              <path d="M2 17l10 5 10-5"/>\n              <path d="M2 12l10 5 10-5"/>\n            </svg>\n          </div>\n          <h4>Hi there! 👋</h4>\n          <p>I\'m your AI assistant. Ask me anything about this website.</p>\n          <div class="sitechat-welcome-suggestions">\n            <button class="sitechat-suggestion" data-query="What can you help me with?">What can you help me with?</button>\n            <button class="sitechat-suggestion" data-query="Tell me about this website">Tell me about this website</button>\n          </div>\n        </div>\n      </div>\n      \n      <div class="sitechat-input-wrapper">\n        <form class="sitechat-input-form">\n          <input type="text" class="sitechat-input" placeholder="Type your message..." autocomplete="off">\n          <button type="submit" class="sitechat-send" disabled>\n            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">\n              <line x1="22" y1="2" x2="11" y2="13"/>\n              <polygon points="22 2 15 22 11 13 2 9 22 2"/>\n            </svg>\n          </button>\n        </form>\n      </div>\n      \n      <div class="sitechat-branding">\n        <a href="'+ config.apiUrl +'" target="_blank" rel="noopener noreferrer">\n          Powered by <strong>SiteChat</strong>\n        </a>\n      </div>\n    </div>\n  ', 
-  document["body"]["appendChild"](widgetRoot), injectResponsiveStyles(), updateBrandingFooter();
+  widgetRoot["className"] = "sitechat-widget", widgetRoot["innerHTML"] = '\n    <button class="sitechat-toggle" aria-label="Toggle chat">\n      <svg class="sitechat-icon-chat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">\n        <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2v10z"/>\n      </svg>\n      <svg class="sitechat-icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">\n        <line x1="18" y1="6" x2="6" y2="18"/>\n        <line x1="6" y1="6" x2="18" y2="18"/>\n      </svg>\n    </button>\n    \n    <div class="sitechat-window">\n      <div class="sitechat-header">\n        <div class="sitechat-header-icon">\n          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">\n            <path d="M12 2L2 7l10 5 10-5-10-5z"/>\n            <path d="M2 17l10 5 10-5"/>\n            <path d="M2 12l10 5 10-5"/>\n          </svg>\n        </div>\n        <div class="sitechat-header-text">\n          <h3>' + config.title + '</h3>\n          <p>Powered by AI</p>\n        </div>\n        <div class="sitechat-header-actions" style="display:flex;align-items:center;gap:8px;flex-shrink:0;">\n          <button type="button" class="sitechat-handoff-btn" title="Talk to a live agent" data-state="idle">\n            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">\n              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>\n              <circle cx="9" cy="7" r="4"/>\n              <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>\n              <path d="M16 3.13a4 4 0 0 1 0 7.75"/>\n            </svg>\n            <span class="sitechat-live-agent-label">Live agent</span>\n          </button>\n          <button type="button" class="sitechat-header-close sitechat-close-btn" aria-label="Close chat">\n            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">\n              <line x1="18" y1="6" x2="6" y2="18"/>\n              <line x1="6" y1="6" x2="18" y2="18"/>\n            </svg>\n          </button>\n        </div>\n      </div>\n      \n      <div class="sitechat-messages">\n        <div class="sitechat-welcome">\n          <div class="sitechat-welcome-icon">\n            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">\n              <path d="M12 2L2 7l10 5 10-5-10-5z"/>\n              <path d="M2 17l10 5 10-5"/>\n              <path d="M2 12l10 5 10-5"/>\n            </svg>\n          </div>\n          <h4>Hi there! 👋</h4>\n          <p>I\'m your AI assistant. Ask me anything about this website.</p>\n          <div class="sitechat-welcome-suggestions">\n            <button class="sitechat-suggestion" data-query="What can you help me with?">What can you help me with?</button>\n            <button class="sitechat-suggestion" data-query="Tell me about this website">Tell me about this website</button>\n          </div>\n        </div>\n      </div>\n      \n      <div class="sitechat-input-wrapper">\n        <form class="sitechat-input-form">\n          <input type="text" class="sitechat-input" placeholder="Type your message..." autocomplete="off">\n          <button type="submit" class="sitechat-send" disabled>\n            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">\n              <line x1="22" y1="2" x2="11" y2="13"/>\n              <polygon points="22 2 15 22 11 13 2 9 22 2"/>\n            </svg>\n          </button>\n        </form>\n      </div>\n      \n      <div class="sitechat-branding">\n        <a href="' + config.apiUrl + '" target="_blank" rel="noopener noreferrer">\n          Powered by <strong>SiteChat</strong>\n        </a>\n      </div>\n    </div>\n  ',
+    document["body"]["appendChild"](widgetRoot), injectResponsiveStyles(), updateBrandingFooter();
   const headerSubtitle = widgetRoot["querySelector"](".sitechat-header-text p");
   if (headerSubtitle) headerSubtitle["textContent"] = "Trợ lý tư vấn AI";
   const handoffLabel = widgetRoot["querySelector"](".sitechat-live-agent-label");
-  if (handoffLabel) handoffLabel["textContent"] = "Gặp nhân viên";
+  if (handoffLabel) handoffLabel["textContent"] = "Tư vấn viên";
   const handoffButton = widgetRoot["querySelector"](".sitechat-handoff-btn");
   if (handoffButton) handoffButton["title"] = "Kết nối với nhân viên tư vấn";
   const welcomeTitle = widgetRoot["querySelector"](".sitechat-welcome h4");
@@ -651,7 +651,7 @@
   const welcomeText = widgetRoot["querySelector"](".sitechat-welcome p");
   if (welcomeText) welcomeText["textContent"] = config.welcomeMessage;
   const suggestionButtons = widgetRoot["querySelectorAll"](".sitechat-suggestion");
-  const suggestions = ["Tìm sản phẩm phù hợp", "Giới thiệu về Euro Hardware"];
+  const suggestions = ["Tìm sản phẩm phù hợp", "Giới thiệu về Công ty chúng tôi"];
   suggestionButtons["forEach"]((button, index) => {
     if (suggestions[index]) {
       button["textContent"] = suggestions[index];
@@ -722,7 +722,7 @@
         body: JSON["stringify"]({
           session_id: sessionId
         })
-      })["catch"](() => {});
+      })["catch"](() => { });
       handoff["stopPolling"]();
       handoff["clearHandoffLocal"]();
     }
@@ -793,12 +793,12 @@
   });
   function showHandoffSuggestion(G) {
     const H = document["createElement"]("div");
-    H["className"] = "sitechat-handoff-suggestion", H["innerHTML"] = '\n      <p>Would you like to speak with a human agent?</p>\n      <div class="sitechat-handoff-suggestion-buttons">\n        <button class="sitechat-handoff-yes">Yes, connect me</button>\n        <button class="sitechat-handoff-no">No, thanks</button>\n      </div>\n    ', 
-    H["querySelector"](".sitechat-handoff-yes")["addEventListener"]("click", () => {
-      H["remove"](), handoff["requestHandoff"](G || "ai_suggested");
-    }), H["querySelector"](".sitechat-handoff-no")["addEventListener"]("click", () => {
-      H["remove"]();
-    }), messagesEl["appendChild"](H), messagesEl["scrollTop"] = messagesEl["scrollHeight"];
+    H["className"] = "sitechat-handoff-suggestion", H["innerHTML"] = '\n      <p>Would you like to speak with a human agent?</p>\n      <div class="sitechat-handoff-suggestion-buttons">\n        <button class="sitechat-handoff-yes">Yes, connect me</button>\n        <button class="sitechat-handoff-no">No, thanks</button>\n      </div>\n    ',
+      H["querySelector"](".sitechat-handoff-yes")["addEventListener"]("click", () => {
+        H["remove"](), handoff["requestHandoff"](G || "ai_suggested");
+      }), H["querySelector"](".sitechat-handoff-no")["addEventListener"]("click", () => {
+        H["remove"]();
+      }), messagesEl["appendChild"](H), messagesEl["scrollTop"] = messagesEl["scrollHeight"];
   }
   function appendMessage(G, H, I = []) {
     lastMessageIndex++;
@@ -823,8 +823,8 @@
     }), M["appendChild"](Q);
     if (H === "bot") {
       const R = document["createElement"]("div");
-      R["className"] = "sitechat-feedback", R["dataset"]["msgIndex"] = msgIndex, R["innerHTML"] = '\n        <button class="sitechat-feedback-btn" data-feedback="positive" title="Helpful">\n          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">\n            <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/>\n          </svg>\n        </button>\n        <button class="sitechat-feedback-btn" data-feedback="negative" title="Not helpful">\n          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">\n            <path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/>\n          </svg>\n        </button>\n      ', 
-      M["appendChild"](R);
+      R["className"] = "sitechat-feedback", R["dataset"]["msgIndex"] = msgIndex, R["innerHTML"] = '\n        <button class="sitechat-feedback-btn" data-feedback="positive" title="Helpful">\n          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">\n            <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/>\n          </svg>\n        </button>\n        <button class="sitechat-feedback-btn" data-feedback="negative" title="Not helpful">\n          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">\n            <path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/>\n          </svg>\n        </button>\n      ',
+        M["appendChild"](R);
     }
     K["appendChild"](L), K["appendChild"](M), messagesEl["appendChild"](K), messagesEl["scrollTop"] = messagesEl["scrollHeight"];
   }
@@ -848,7 +848,7 @@
     const H = document["createElement"]("div");
     H["className"] = "sitechat-avatar bot", H["innerHTML"] = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">\n      <path d="M12 2L2 7l10 5 10-5-10-5z"/>\n      <path d="M2 17l10 5 10-5"/>\n      <path d="M2 12l10 5 10-5"/>\n    </svg>';
     const I = document["createElement"]("div");
-    return I["className"] = "sitechat-typing", I["innerHTML"] = "<span></span><span></span><span></span>", G["appendChild"](H), 
-    G["appendChild"](I), messagesEl["appendChild"](G), messagesEl["scrollTop"] = messagesEl["scrollHeight"], G;
+    return I["className"] = "sitechat-typing", I["innerHTML"] = "<span></span><span></span><span></span>", G["appendChild"](H),
+      G["appendChild"](I), messagesEl["appendChild"](G), messagesEl["scrollTop"] = messagesEl["scrollHeight"], G;
   }
 })();

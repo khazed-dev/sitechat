@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Dữ liệu công khai đã được SiteChat thu thập và lập chỉ mục.">
+    <title>Kho dữ liệu RAG | SiteChat</title>
+    <link rel="stylesheet" href="/css/data.css">
+    <script src="/js/data.js" defer></script>
+</head>
+<body>
+    <header class="site-header">
+        <a class="brand" href="/" aria-label="Về trang chủ SiteChat">
+            <span class="brand-mark" aria-hidden="true">S</span>
+            <span>SiteChat Data</span>
+        </a>
+        <span class="read-only-badge">Chỉ đọc</span>
+    </header>
+
+    <main>
+        <section class="hero">
+            <p class="eyebrow">Dữ liệu công khai</p>
+            <h1>Kho dữ liệu của hệ thống RAG</h1>
+            <p class="hero-copy">
+                Theo dõi những trang đã được thu thập, nội dung xem trước và các
+                đoạn dữ liệu mà chatbot sử dụng để tìm kiếm câu trả lời.
+            </p>
+
+            <form id="search-form" class="search" role="search">
+                <label class="sr-only" for="search-input">Tìm trong dữ liệu</label>
+                <input
+                    id="search-input"
+                    name="search"
+                    type="search"
+                    maxlength="100"
+                    placeholder="Tìm theo tiêu đề, URL hoặc nội dung..."
+                    autocomplete="off"
+                >
+                <button type="submit">Tìm kiếm</button>
+            </form>
+        </section>
+
+        <section class="stats" aria-label="Thống kê dữ liệu">
+            <article>
+                <span id="page-count" class="stat-value">—</span>
+                <span class="stat-label">Trang đã lập chỉ mục</span>
+            </article>
+            <article>
+                <span id="chunk-count" class="stat-value">—</span>
+                <span class="stat-label">Vector chunk</span>
+            </article>
+            <article>
+                <span id="model-name" class="stat-value stat-model">—</span>
+                <span class="stat-label">Model embedding</span>
+            </article>
+        </section>
+
+        <section class="dataset" aria-labelledby="dataset-title">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">Danh mục</p>
+                    <h2 id="dataset-title">Các trang đã crawl</h2>
+                </div>
+                <p id="result-summary" class="result-summary" aria-live="polite"></p>
+            </div>
+
+            <div id="status" class="status" aria-live="polite">Đang tải dữ liệu…</div>
+            <div id="data-grid" class="data-grid" hidden></div>
+
+            <nav id="pagination" class="pagination" aria-label="Phân trang" hidden>
+                <button id="previous-page" type="button">← Trang trước</button>
+                <span id="page-label"></span>
+                <button id="next-page" type="button">Trang sau →</button>
+            </nav>
+        </section>
+    </main>
+
+    <dialog id="chunk-dialog" class="chunk-dialog" aria-labelledby="dialog-title">
+        <div class="dialog-header">
+            <div>
+                <p class="eyebrow">FAISS document store</p>
+                <h2 id="dialog-title">Chi tiết các chunk</h2>
+            </div>
+            <button id="close-dialog" class="close-button" type="button" aria-label="Đóng">×</button>
+        </div>
+        <a id="dialog-url" class="dialog-url" target="_blank" rel="noopener noreferrer"></a>
+        <div id="dialog-status" class="status">Đang tải các chunk…</div>
+        <div id="chunk-list" class="chunk-list"></div>
+    </dialog>
+
+    <footer>
+        Dữ liệu được công khai ở chế độ chỉ đọc. Trang này không cung cấp thao tác
+        thêm, sửa, xóa hoặc kích hoạt crawl.
+    </footer>
+</body>
+</html>

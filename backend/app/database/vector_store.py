@@ -304,6 +304,40 @@ class VectorStore:
         except Exception as e:
             logger.error(f"Failed to delete documents: {e}")
             return False
+
+    def get_documents_by_metadata(
+        self,
+        filter: Dict,
+        limit: int = 100,
+    ) -> List[Document]:
+        """Return a read-only snapshot of documents matching metadata."""
+        if not self._initialized:
+            self.initialize()
+
+        safe_limit = max(1, min(limit, 200))
+        docstore = getattr(self.vector_store.docstore, "_dict", {})
+        documents = [
+            doc
+            for doc in docstore.values()
+            if (
+                isinstance(doc, Document)
+                and doc.metadata.get("source") != "init"
+                and self._matches_filter(doc, filter)
+            )
+        ]
+        documents.sort(
+            key=lambda doc: (
+                doc.metadata.get("url", ""),
+                doc.metadata.get("chunk_index", -1),
+            )
+        )
+
+        # Return new Document instances so callers cannot mutate FAISS docstore
+        # metadata or page content accidentally.
+        return [
+            Document(page_content=doc.page_content, metadata=dict(doc.metadata))
+            for doc in documents[:safe_limit]
+        ]
     
     def clear_collection(self):
         """Clear all documents from the collection."""

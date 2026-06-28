@@ -43,6 +43,7 @@ from app.routes.schedule import router as schedule_router
 from app.routes.qa import router as qa_router
 from app.routes.leads import router as leads_router
 from app.routes.messenger import router as messenger_router
+from app.routes.public_data import router as public_data_router
 from app.services.auth import AuthService
 from app.services.scheduler import get_scheduler
 
@@ -187,6 +188,7 @@ app.include_router(schedule_router)
 app.include_router(qa_router)
 app.include_router(leads_router)
 app.include_router(messenger_router)
+app.include_router(public_data_router)
 # Serve static files (frontend)
 # Get the absolute path to the frontend directory
 backend_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -271,6 +273,15 @@ async def login_page():
     if os.path.exists(login_path):
         return _html_file_response("login.html")
     return {"error": "Login page not found"}
+
+
+@app.get("/data")
+async def public_data_page():
+    """Serve the public, read-only crawl data explorer."""
+    data_path = os.path.join(frontend_path, "data.html")
+    if os.path.exists(data_path):
+        return _html_file_response("data.html")
+    return {"error": "Data page not found"}
 
 
 @app.get("/api")
