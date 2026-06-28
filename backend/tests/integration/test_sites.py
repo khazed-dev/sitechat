@@ -171,7 +171,7 @@ class TestSiteConfigEndpoints:
         assert response.status_code == 200
         data = response.json()
         # Should return default config
-        assert data["appearance"]["primary_color"] == "#0D9488"
+        assert data["appearance"]["primary_color"] == "#3366cc"
 
 
 class TestSiteSecurityConfig:

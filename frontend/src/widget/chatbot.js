@@ -49,7 +49,7 @@
     siteId: scriptEl?.dataset?.siteId || embedFallback?.siteId || "default",
     apiUrl: datasetApi || embedApi || defaultEmbedApiUrl(),
     position: scriptEl?.dataset?.position || "bottom-right",
-    primaryColor: scriptEl?.dataset?.primaryColor || "#1B5E3B",
+    primaryColor: scriptEl?.dataset?.primaryColor || "#3366cc",
     title: scriptEl?.dataset?.title || "Ask AI",
     welcomeMessage: "Bạn đang cần tìm sản phẩm hoặc tư vấn giải pháp nào?",
     showSources: true,
@@ -478,11 +478,11 @@
         });
         if (J["ok"]) {
           const K = await J["json"]();
-          handoffState.handoffId = K["handoff_id"], handoffState.mode = "pending", this["updateUIForHandoff"](), this["addSystemMessage"]("Connecting you to a human agent. Please wait..."),
+          handoffState.handoffId = K["handoff_id"], handoffState.mode = "pending", this["updateUIForHandoff"](), this["addSystemMessage"]("Đang kết nối bạn với nhân viên tư vấn. Vui lòng chờ trong giây lát..."),
             this["startPolling"]();
         }
       } catch (L) {
-        console["error"]("Failed to request handoff:", L), this["addSystemMessage"]("Sorry, we could not connect you to an agent. Please try again later.");
+        console["error"]("Failed to request handoff:", L), this["addSystemMessage"]("Xin lỗi, hiện chưa thể kết nối với nhân viên tư vấn. Vui lòng thử lại sau.");
       }
     },
     getAIConversation() {
@@ -496,7 +496,7 @@
       }), H;
     },
     showOfflineForm() {
-      const G = '\n        <div class="sitechat-offline-form">\n          <div class="sitechat-offline-icon">\n            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">\n              <circle cx="12" cy="12" r="10"/>\n              <path d="M12 6v6l4 2"/>\n            </svg>\n          </div>\n          <h4>We\'re currently offline</h4>\n          <p>' + escapeHtml(handoffState.offlineMessage || "Leave your email and we'll get back to you.") + '</p>\n          <form class="sitechat-offline-email-form">\n            <input type="email" placeholder="Your email address" required class="sitechat-offline-email">\n            <button type="submit" class="sitechat-offline-submit">Send</button>\n          </form>\n        </div>\n      ', H = document["createElement"]("div");
+      const G = '\n        <div class="sitechat-offline-form">\n          <div class="sitechat-offline-icon">\n            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">\n              <circle cx="12" cy="12" r="10"/>\n              <path d="M12 6v6l4 2"/>\n            </svg>\n          </div>\n          <h4>Hiện chưa có nhân viên trực tuyến</h4>\n          <p>' + escapeHtml(handoffState.offlineMessage || "Vui lòng để lại email, chúng tôi sẽ liên hệ với bạn sớm nhất.") + '</p>\n          <form class="sitechat-offline-email-form">\n            <input type="email" placeholder="Địa chỉ email của bạn" required class="sitechat-offline-email">\n            <button type="submit" class="sitechat-offline-submit">Gửi</button>\n          </form>\n        </div>\n      ', H = document["createElement"]("div");
       H["className"] = "sitechat-message-wrapper bot", H["innerHTML"] = '\n        <div class="sitechat-avatar bot">\n          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">\n            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>\n            <circle cx="12" cy="7" r="4"/>\n          </svg>\n        </div>\n        <div class="sitechat-message-content">\n          <div class="sitechat-message bot">' + G + "</div>\n        </div>\n      ",
         messagesEl["appendChild"](H), messagesEl["scrollTop"] = messagesEl["scrollHeight"];
       const I = H["querySelector"](".sitechat-offline-email-form");
@@ -516,7 +516,7 @@
               visitor_email: K,
               ai_conversation: this["getAIConversation"]()
             })
-          }), H["querySelector"](".sitechat-message")["innerHTML"] = '\n            <div class="sitechat-offline-success">\n              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">\n                <polyline points="20 6 9 17 4 12"/>\n              </svg>\n              <p>Thanks! We\'ll get back to you at <strong>' + escapeHtml(K) + "</strong> as soon as possible.</p>\n            </div>\n          ";
+          }), H["querySelector"](".sitechat-message")["innerHTML"] = '\n            <div class="sitechat-offline-success">\n              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">\n                <polyline points="20 6 9 17 4 12"/>\n              </svg>\n              <p>Cảm ơn bạn! Chúng tôi sẽ liên hệ qua <strong>' + escapeHtml(K) + "</strong> sớm nhất có thể.</p>\n            </div>\n          ";
         } catch (L) {
           console["error"]("Failed to submit offline request:", L);
         }
@@ -527,7 +527,7 @@
       if (G) {
         G["classList"]["add"]("handoff-mode");
         const I = G["querySelector"](".sitechat-header-text p");
-        I && (I["textContent"] = handoffState.mode === "active" ? "Chatting with " + (handoffState.agentName || "Agent") : "Waiting for agent...");
+        I && (I["textContent"] = handoffState.mode === "active" ? "Đang trò chuyện với " + (handoffState.agentName || "nhân viên") : "Đang chờ nhân viên...");
       }
       const H = document["querySelector"](".sitechat-handoff-btn");
       H && (H["style"]["display"] = "none");
@@ -537,6 +537,7 @@
       H["className"] = "sitechat-system-message", H["innerHTML"] = "<span>" + escapeHtml(G) + "</span>", messagesEl["appendChild"](H), messagesEl["scrollTop"] = messagesEl["scrollHeight"];
     },
     addAgentMessage(G, H) {
+      H = H || "Nhân viên";
       const I = document["createElement"]("div");
       I["className"] = "sitechat-message-wrapper bot agent", I["innerHTML"] = '\n        <div class="sitechat-avatar bot agent">\n          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">\n            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>\n            <circle cx="12" cy="7" r="4"/>\n          </svg>\n        </div>\n        <div class="sitechat-message-content">\n          <div class="sitechat-message bot">' + escapeHtml(G) + '</div>\n          <div class="sitechat-message-time">' + (H || "Agent") + " · " + (new Date)["toLocaleTimeString"]([], {
         hour: "2-digit",
@@ -558,14 +559,14 @@
         if (H["ok"]) {
           const I = await H["json"]();
           I["status"] === "active" && handoffState.mode !== "active" && (handoffState.mode = "active", handoffState.agentName = I["agent_name"], this["updateUIForHandoff"](),
-            this["addSystemMessage"]((I["agent_name"] || "An agent") + " has joined the conversation."));
+            this["addSystemMessage"]((I["agent_name"] || "Nhân viên tư vấn") + " đã tham gia cuộc trò chuyện."));
           if (I["status"] === "resolved") {
-            handoffState.mode = "resolved", this["stopPolling"](), this["addSystemMessage"]("This conversation has been resolved. Thank you!"),
+            handoffState.mode = "resolved", this["stopPolling"](), this["addSystemMessage"]("Cuộc trò chuyện đã kết thúc. Cảm ơn bạn!"),
               this["resetToAIMode"]();
             return;
           }
           if (I["status"] === "abandoned") {
-            this["stopPolling"](), this["addSystemMessage"]("You are back on the AI assistant."), this["clearHandoffLocal"]();
+            this["stopPolling"](), this["addSystemMessage"]("Bạn đã quay lại trò chuyện với trợ lý AI."), this["clearHandoffLocal"]();
             return;
           }
           I["messages"] && I["messages"]["length"] > 0 && I["messages"]["forEach"](J => {
@@ -752,7 +753,7 @@
           "Content-Type": "application/json"
         }
       }), setTimeout(() => {
-        I["innerHTML"] = '\n          <div class="sitechat-feedback-thanks">\n            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">\n              <polyline points="20 6 9 17 4 12"/>\n            </svg>\n            Thanks for your feedback!\n          </div>\n        ';
+        I["innerHTML"] = '\n          <div class="sitechat-feedback-thanks">\n            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">\n              <polyline points="20 6 9 17 4 12"/>\n            </svg>\n            Cảm ơn phản hồi của bạn!\n          </div>\n        ';
       }, 300);
     } catch (L) {
       console["error"]("Failed to submit feedback:", L);
@@ -770,7 +771,7 @@
     appendMessage(H, "user");
     if (handoffState.mode === "pending" || handoffState.mode === "active") {
       const K = await handoff["sendMessage"](H);
-      !K && handoff["addSystemMessage"]("Failed to send message. Please try again.");
+      !K && handoff["addSystemMessage"]("Không thể gửi tin nhắn. Vui lòng thử lại.");
       return;
     }
     const typingRow = showTypingIndicator();
@@ -786,14 +787,14 @@
           site_id: config.siteId
         })
       }), M = await L["json"]();
-      typingRow["remove"](), appendMessage(M["answer"] || M["response"] || "No response", "bot", M["sources"]), M["suggest_handoff"] && showHandoffSuggestion(M["handoff_reason"]);
+      typingRow["remove"](), appendMessage(M["answer"] || M["response"] || "Không nhận được phản hồi", "bot", M["sources"]), M["suggest_handoff"] && showHandoffSuggestion(M["handoff_reason"]);
     } catch (N) {
-      typingRow["remove"](), appendMessage("Sorry, something went wrong. Please try again.", "bot");
+      typingRow["remove"](), appendMessage("Xin lỗi, đã xảy ra lỗi. Vui lòng thử lại.", "bot");
     }
   });
   function showHandoffSuggestion(G) {
     const H = document["createElement"]("div");
-    H["className"] = "sitechat-handoff-suggestion", H["innerHTML"] = '\n      <p>Would you like to speak with a human agent?</p>\n      <div class="sitechat-handoff-suggestion-buttons">\n        <button class="sitechat-handoff-yes">Yes, connect me</button>\n        <button class="sitechat-handoff-no">No, thanks</button>\n      </div>\n    ',
+    H["className"] = "sitechat-handoff-suggestion", H["innerHTML"] = '\n      <p>Bạn có muốn trò chuyện với nhân viên tư vấn không?</p>\n      <div class="sitechat-handoff-suggestion-buttons">\n        <button class="sitechat-handoff-yes">Có, kết nối ngay</button>\n        <button class="sitechat-handoff-no">Không, cảm ơn</button>\n      </div>\n    ',
       H["querySelector"](".sitechat-handoff-yes")["addEventListener"]("click", () => {
         H["remove"](), handoff["requestHandoff"](G || "ai_suggested");
       }), H["querySelector"](".sitechat-handoff-no")["addEventListener"]("click", () => {
@@ -814,7 +815,7 @@
     let O = G;
     H === "bot" && (O = markdownToHtml(G));
     let P = O;
-    config.showSources && I && I["length"] > 0 && (P += '\n        <div class="sitechat-sources">\n          <div class="sitechat-sources-label">\n            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">\n              <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>\n              <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>\n            </svg>\n            Sources\n          </div>\n          <div class="sitechat-sources-list">\n            ' + I["map"](R => '\n              <a href="' + R["url"] + '" target="_blank" class="sitechat-source-link" title="' + R["url"] + '">\n                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">\n                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>\n                  <polyline points="15 3 21 3 21 9"/>\n                  <line x1="10" y1="14" x2="21" y2="3"/>\n                </svg>\n                ' + (R["title"] || "Source") + "\n              </a>\n            ")["join"]("") + "\n          </div>\n        </div>\n      ");
+    config.showSources && I && I["length"] > 0 && (P += '\n        <div class="sitechat-sources">\n          <div class="sitechat-sources-label">\n            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">\n              <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>\n              <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>\n            </svg>\n            Nguồn tham khảo\n          </div>\n          <div class="sitechat-sources-list">\n            ' + I["map"](R => '\n              <a href="' + R["url"] + '" target="_blank" class="sitechat-source-link" title="' + R["url"] + '">\n                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">\n                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>\n                  <polyline points="15 3 21 3 21 9"/>\n                  <line x1="10" y1="14" x2="21" y2="3"/>\n                </svg>\n                ' + (R["title"] || "Nguồn") + "\n              </a>\n            ")["join"]("") + "\n          </div>\n        </div>\n      ");
     N["innerHTML"] = P, M["appendChild"](N);
     const Q = document["createElement"]("div");
     Q["className"] = "sitechat-message-time", Q["textContent"] = (new Date)["toLocaleTimeString"]([], {
@@ -823,7 +824,7 @@
     }), M["appendChild"](Q);
     if (H === "bot") {
       const R = document["createElement"]("div");
-      R["className"] = "sitechat-feedback", R["dataset"]["msgIndex"] = msgIndex, R["innerHTML"] = '\n        <button class="sitechat-feedback-btn" data-feedback="positive" title="Helpful">\n          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">\n            <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/>\n          </svg>\n        </button>\n        <button class="sitechat-feedback-btn" data-feedback="negative" title="Not helpful">\n          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">\n            <path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/>\n          </svg>\n        </button>\n      ',
+      R["className"] = "sitechat-feedback", R["dataset"]["msgIndex"] = msgIndex, R["innerHTML"] = '\n        <button class="sitechat-feedback-btn" data-feedback="positive" title="Hữu ích">\n          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">\n            <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/>\n          </svg>\n        </button>\n        <button class="sitechat-feedback-btn" data-feedback="negative" title="Chưa hữu ích">\n          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">\n            <path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/>\n          </svg>\n        </button>\n      ',
         M["appendChild"](R);
     }
     K["appendChild"](L), K["appendChild"](M), messagesEl["appendChild"](K), messagesEl["scrollTop"] = messagesEl["scrollHeight"];

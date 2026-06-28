@@ -1451,7 +1451,7 @@ function initTabHandlers(tabId) {
 function getAppearanceTabContent() {
     const config = currentSiteConfig || {};
     const appearance = config.appearance || {};
-    const primaryColor = appearance.primary_color || '#0D9488';
+    const primaryColor = appearance.primary_color || '#3366cc';
     const chatTitle = appearance.chat_title || 'Chat with us';
     const welcomeMsg = appearance.welcome_message || 'Hi! How can I help you today?';
     
@@ -2100,7 +2100,7 @@ function initInteractivePreview() {
 function resetPreviewMessages() {
     const messagesContainer = document.getElementById('preview-messages');
     const welcomeMsg = document.getElementById('config-welcome')?.value || 'Hi! How can I help you today?';
-    const color = document.getElementById('config-color')?.value || '#0D9488';
+    const color = document.getElementById('config-color')?.value || '#3366cc';
     
     if (messagesContainer) {
         messagesContainer.innerHTML = `
@@ -2124,7 +2124,7 @@ async function sendPreviewMessage() {
     if (!input || !messagesContainer || !input.value.trim()) return;
     
     const message = input.value.trim();
-    const color = document.getElementById('config-color')?.value || '#0D9488';
+    const color = document.getElementById('config-color')?.value || '#3366cc';
     input.value = '';
     sendBtn.disabled = true;
     
@@ -3027,7 +3027,7 @@ function setupCustomizeTabs() {
 }
 
 function updateWidgetPreview() {
-    const color = document.getElementById('config-color')?.value || '#0D9488';
+    const color = document.getElementById('config-color')?.value || '#3366cc';
     const title = document.getElementById('config-title')?.value || 'Chat with us';
     const welcome = document.getElementById('config-welcome')?.value || 'Hi! How can I help you today?';
     
@@ -3244,7 +3244,7 @@ async function loadSiteConfig(siteId) {
 function getDefaultConfig() {
     return {
         appearance: {
-            primary_color: '#0D9488',
+            primary_color: '#3366cc',
             chat_title: 'Chat with us',
             welcome_message: 'Hi! How can I help you today?',
             bot_avatar_url: null,
@@ -3271,8 +3271,8 @@ function populateConfigForm(config) {
     // Appearance
     const colorInput = document.getElementById('config-color');
     const colorTextInput = document.getElementById('config-color-text');
-    if (colorInput) colorInput.value = appearance.primary_color || '#0D9488';
-    if (colorTextInput) colorTextInput.value = (appearance.primary_color || '#0D9488').toUpperCase();
+    if (colorInput) colorInput.value = appearance.primary_color || '#3366cc';
+    if (colorTextInput) colorTextInput.value = (appearance.primary_color || '#3366cc').toUpperCase();
     
     const titleInput = document.getElementById('config-title');
     if (titleInput) titleInput.value = appearance.chat_title || 'Chat with us';
@@ -3318,7 +3318,7 @@ function populateConfigForm(config) {
 function getConfigFromForm() {
     return {
         appearance: {
-            primary_color: document.getElementById('config-color')?.value || '#0D9488',
+            primary_color: document.getElementById('config-color')?.value || '#3366cc',
             chat_title: document.getElementById('config-title')?.value || 'Chat with us',
             welcome_message: document.getElementById('config-welcome')?.value || 'Hi! How can I help you today?',
             bot_avatar_url: null,
@@ -6574,8 +6574,8 @@ async function loadWhiteLabelConfig() {
 function populateWhiteLabelForm(config) {
     const fields = {
         'wl-app-name': config.app_name || 'SiteChat',
-        'wl-primary-color': config.primary_color || '#0D9488',
-        'wl-primary-color-text': config.primary_color || '#0D9488',
+        'wl-primary-color': config.primary_color || '#3366cc',
+        'wl-primary-color-text': config.primary_color || '#3366cc',
         'wl-logo-url': config.logo_url || '',
     };
 
@@ -6625,7 +6625,7 @@ async function saveWhiteLabelConfig() {
     try {
         const config = {
             app_name: document.getElementById('wl-app-name')?.value || 'SiteChat',
-            primary_color: document.getElementById('wl-primary-color')?.value || '#0D9488',
+            primary_color: document.getElementById('wl-primary-color')?.value || '#3366cc',
             logo_url: document.getElementById('wl-logo-url')?.value || null,
         };
         

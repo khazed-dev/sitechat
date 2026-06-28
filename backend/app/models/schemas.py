@@ -120,7 +120,7 @@ class HealthCheck(BaseModel):
 
 class SiteAppearanceConfig(BaseModel):
     """Appearance configuration for the chatbot widget."""
-    primary_color: str = Field(default="#0D9488", description="Primary color (hex)")
+    primary_color: str = Field(default="#3366cc", description="Primary color (hex)")
     chat_title: str = Field(default="Chat with us", description="Chat widget title")
     welcome_message: str = Field(
         default="Bạn đang cần tìm sản phẩm hoặc tư vấn giải pháp nào?",
@@ -736,7 +736,7 @@ class PlatformWhiteLabelConfig(BaseModel):
     app_name: str = Field(default="SiteChat", description="Application name")
     logo_url: Optional[str] = Field(default=None, description="Custom logo URL")
     favicon_url: Optional[str] = Field(default=None, description="Custom favicon URL")
-    primary_color: str = Field(default="#0D9488", description="Primary brand color")
+    primary_color: str = Field(default="#3366cc", description="Primary brand color")
     secondary_color: str = Field(default="#16a34a", description="Secondary brand color")
     login_title: str = Field(default="SiteChat", description="Login page title")
     login_subtitle: str = Field(default="AI-Powered Customer Support", description="Login page subtitle")
