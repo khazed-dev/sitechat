@@ -1424,6 +1424,9 @@ function initTabHandlers(tabId) {
             initAppearanceHandlers();
             loadSecureEmbedCode();
             break;
+        case 'behavior':
+            initBehaviorHandlers();
+            break;
         case 'quick-prompts':
             initQuickPromptsHandlers();
             loadQuickPrompts();
@@ -1593,8 +1596,8 @@ function getBehaviorTabContent() {
             </div>
             
             <div class="form-group">
-                <label for="config-temperature">Temperature: <span id="temp-value">${behavior.temperature || 0.7}</span></label>
-                <input type="range" id="config-temperature" min="0" max="2" step="0.1" value="${behavior.temperature || 0.7}" class="form-range">
+                <label for="config-temperature">Temperature: <span id="temp-value">${behavior.temperature ?? 0.7}</span></label>
+                <input type="range" id="config-temperature" min="0" max="2" step="0.1" value="${behavior.temperature ?? 0.7}" class="form-range">
                 <div class="range-labels">
                     <span>Precise</span>
                     <span>Creative</span>
@@ -1603,12 +1606,7 @@ function getBehaviorTabContent() {
             
             <div class="form-group">
                 <label for="config-max-tokens">Max Response Length</label>
-                <input type="number" id="config-max-tokens" value="${behavior.max_tokens || 500}" min="50" max="4000" class="form-input">
-            </div>
-            
-            <div class="form-group form-checkbox">
-                <input type="checkbox" id="config-show-sources" ${behavior.show_sources !== false ? 'checked' : ''}>
-                <label for="config-show-sources">Show source citations</label>
+                <input type="number" id="config-max-tokens" value="${behavior.max_tokens ?? 500}" min="50" max="4000" class="form-input">
             </div>
             
             <div class="form-actions">
@@ -1616,6 +1614,18 @@ function getBehaviorTabContent() {
             </div>
         </div>
     `;
+}
+
+function initBehaviorHandlers() {
+    const tempSlider = document.getElementById('config-temperature');
+    const tempValue = document.getElementById('temp-value');
+    if (tempSlider && tempValue) {
+        tempSlider.addEventListener('input', () => {
+            tempValue.textContent = tempSlider.value;
+        });
+    }
+
+    document.getElementById('save-config')?.addEventListener('click', saveConfig);
 }
 
 function getQuickPromptsTabContent() {
@@ -3321,17 +3331,16 @@ function populateConfigForm(config) {
     
     const tempSlider = document.getElementById('config-temperature');
     const tempValue = document.getElementById('temp-value');
-    if (tempSlider) tempSlider.value = behavior.temperature || 0.7;
-    if (tempValue) tempValue.textContent = behavior.temperature || 0.7;
+    if (tempSlider) tempSlider.value = behavior.temperature ?? 0.7;
+    if (tempValue) tempValue.textContent = behavior.temperature ?? 0.7;
     
     const maxTokensInput = document.getElementById('config-max-tokens');
-    if (maxTokensInput) maxTokensInput.value = behavior.max_tokens || 500;
-    
-    const showSourcesCheckbox = document.getElementById('config-show-sources');
-    if (showSourcesCheckbox) showSourcesCheckbox.checked = behavior.show_sources !== false;
+    if (maxTokensInput) maxTokensInput.value = behavior.max_tokens ?? 500;
 }
 
 function getConfigFromForm() {
+    const temperatureValue = parseFloat(document.getElementById('config-temperature')?.value);
+    const maxTokensValue = parseInt(document.getElementById('config-max-tokens')?.value, 10);
     return {
         appearance: {
             primary_color: document.getElementById('config-color')?.value || '#3366cc',
@@ -3345,9 +3354,22 @@ function getConfigFromForm() {
         },
         behavior: {
             system_prompt: document.getElementById('config-prompt')?.value || '',
-            temperature: parseFloat(document.getElementById('config-temperature')?.value) || 0.7,
-            max_tokens: parseInt(document.getElementById('config-max-tokens')?.value) || 500,
-            show_sources: document.getElementById('config-show-sources')?.checked ?? true
+            temperature: Number.isFinite(temperatureValue) ? temperatureValue : 0.7,
+            max_tokens: Number.isFinite(maxTokensValue) ? maxTokensValue : 500,
+            show_sources: true
+        }
+    };
+}
+
+function getBehaviorConfigFromForm() {
+    const temperatureValue = parseFloat(document.getElementById('config-temperature')?.value);
+    const maxTokensValue = parseInt(document.getElementById('config-max-tokens')?.value, 10);
+    return {
+        behavior: {
+            system_prompt: document.getElementById('config-prompt')?.value || '',
+            temperature: Number.isFinite(temperatureValue) ? temperatureValue : 0.7,
+            max_tokens: Number.isFinite(maxTokensValue) ? maxTokensValue : 500,
+            show_sources: true
         }
     };
 }
@@ -3361,7 +3383,11 @@ async function saveConfig() {
     saveBtn.disabled = true;
     
     try {
-        const config = getConfigFromForm();
+        const isBehaviorOnlyForm = Boolean(document.getElementById('config-prompt'))
+            && !document.getElementById('config-color');
+        const config = isBehaviorOnlyForm
+            ? getBehaviorConfigFromForm()
+            : getConfigFromForm();
         
         const response = await fetch(`${API_BASE}/sites/${currentDetailSite.site_id}/config`, {
             method: 'PUT',

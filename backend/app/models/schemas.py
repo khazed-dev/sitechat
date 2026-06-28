@@ -200,7 +200,6 @@ class SiteQuickPromptsConfig(BaseModel):
     prompts: List[QuickPrompt] = Field(
         default_factory=lambda: [
             QuickPrompt(text="Tìm sản phẩm phù hợp", icon="💡"),
-            QuickPrompt(text="Tôi muốn nhận báo giá", icon="🚀"),
             QuickPrompt(text="Giới thiệu về Công ty chúng tôi", icon="💰")
         ],
         description="List of quick prompts"
