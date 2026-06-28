@@ -1,12 +1,13 @@
 (function () {
     "use strict";
 
-    const state = { page: 1, perPage: 12, search: "", totalPages: 0 };
+    const state = { page: 1, perPage: 20, search: "", totalPages: 0 };
     const elements = {
         form: document.getElementById("search-form"),
         search: document.getElementById("search-input"),
         status: document.getElementById("status"),
-        grid: document.getElementById("data-grid"),
+        tableWrap: document.getElementById("table-wrap"),
+        body: document.getElementById("data-body"),
         pagination: document.getElementById("pagination"),
         previous: document.getElementById("previous-page"),
         next: document.getElementById("next-page"),
@@ -42,46 +43,64 @@
         return element;
     }
 
-    function renderPageCard(item) {
-        const card = createElement("article", "data-card");
-        const heading = createElement("h3", "card-title", item.title);
+    function createCell(text, className) {
+        return createElement("td", className || "", text);
+    }
+
+    function renderPageRow(item, index) {
+        const row = document.createElement("tr");
+        const absoluteIndex = (state.page - 1) * state.perPage + index + 1;
+
+        row.appendChild(createCell(String(absoluteIndex), "cell-number"));
+        row.appendChild(createCell(item.title, "cell-title"));
+
+        const urlCell = document.createElement("td");
         const link = createElement("a", "card-url", item.url);
         link.href = item.url;
         link.target = "_blank";
         link.rel = "noopener noreferrer";
+        link.title = item.url;
+        urlCell.appendChild(link);
+        row.appendChild(urlCell);
 
-        const preview = createElement(
-            "p",
-            "card-preview",
+        const previewCell = createCell(
             item.content_preview || "Trang này chưa có nội dung xem trước."
         );
+        previewCell.className = "cell-preview";
+        previewCell.title = item.content_preview || "";
+        row.appendChild(previewCell);
 
-        const metadata = createElement("div", "card-metadata");
-        metadata.append(
-            createElement("span", "", number.format(item.chunk_count) + " chunk"),
-            createElement(
-                "span",
-                "",
+        row.appendChild(createCell(number.format(item.chunk_count), "cell-number"));
+
+        const statusCell = createCell(item.status || "unknown");
+        statusCell.className = "cell-status";
+        row.appendChild(statusCell);
+        row.appendChild(createCell(item.site_id || "—", "cell-code"));
+        row.appendChild(
+            createCell(
                 item.last_crawled
-                    ? "Crawl " + date.format(new Date(item.last_crawled))
-                    : "Chưa có thời gian crawl"
+                    ? date.format(new Date(item.last_crawled))
+                    : "—",
+                "cell-date"
             )
         );
 
-        const button = createElement("button", "detail-button", "Xem các chunk");
+        const actionCell = document.createElement("td");
+        const button = createElement("button", "detail-button", "View chunks");
         button.type = "button";
         button.addEventListener("click", function () {
             openChunks(item);
         });
+        actionCell.appendChild(button);
+        row.appendChild(actionCell);
 
-        card.append(heading, link, preview, metadata, button);
-        return card;
+        return row;
     }
 
     function render(data) {
-        elements.grid.replaceChildren();
-        data.items.forEach(function (item) {
-            elements.grid.appendChild(renderPageCard(item));
+        elements.body.replaceChildren();
+        data.items.forEach(function (item, index) {
+            elements.body.appendChild(renderPageRow(item, index));
         });
 
         state.totalPages = data.pagination.total_pages;
@@ -99,10 +118,10 @@
                     : "Chưa có trang nào được lập chỉ mục.",
                 "empty"
             );
-            elements.grid.hidden = true;
+            elements.tableWrap.hidden = true;
         } else {
             elements.status.hidden = true;
-            elements.grid.hidden = false;
+            elements.tableWrap.hidden = false;
         }
 
         elements.pageLabel.textContent =
@@ -114,7 +133,7 @@
 
     async function loadData() {
         setStatus("Đang tải dữ liệu…");
-        elements.grid.hidden = true;
+        elements.tableWrap.hidden = true;
         elements.pagination.hidden = true;
 
         const params = new URLSearchParams({
