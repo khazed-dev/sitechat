@@ -7,6 +7,7 @@ from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks
 from loguru import logger
 
 from app.database import get_mongodb
+from app.config import settings
 from app.routes.auth import get_current_user
 from app.services.crawler import CrawlerService
 from app.services.indexer import IndexerService
@@ -252,7 +253,10 @@ async def trigger_incremental_crawl(
         job_id=job_id,
         site_url=site.get("url"),
         site_id=site_id,
-        max_pages=schedule_config.get("max_pages", 50),
+        max_pages=max(
+            schedule_config.get("max_pages", 50),
+            settings.INCREMENTAL_SCAN_MAX_PAGES
+        ),
         include_patterns=schedule_config.get("include_patterns", []),
         exclude_patterns=schedule_config.get("exclude_patterns", [])
     )
@@ -291,10 +295,11 @@ async def _run_incremental_crawl_background(
         existing_urls = set(
             await db.db.pages.distinct("url", {"status": "indexed"})
         )
-        new_pages = [
+        discovered_new_pages = [
             page for page in (pages or [])
             if page.get("url") and page["url"] not in existing_urls
         ]
+        new_pages = discovered_new_pages[:settings.INCREMENTAL_MAX_NEW_PAGES]
 
         indexed_count = 0
         if new_pages:
@@ -313,12 +318,15 @@ async def _run_incremental_crawl_background(
             {"$set": {
                 "completed_at": datetime.utcnow(),
                 "pages_discovered": len(pages) if pages else 0,
-                "new_pages_found": len(new_pages)
+                "new_pages_found": len(discovered_new_pages),
+                "new_pages_indexed": indexed_count,
+                "new_pages_limit": settings.INCREMENTAL_MAX_NEW_PAGES
             }}
         )
         logger.info(
             f"Incremental crawl {job_id} completed for {site_id}: "
-            f"{len(new_pages)} new, {indexed_count} indexed"
+            f"{len(pages) if pages else 0} scanned, "
+            f"{len(discovered_new_pages)} new, {indexed_count} indexed"
         )
     except Exception as e:
         logger.error(f"Incremental crawl job {job_id} failed: {e}")

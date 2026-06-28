@@ -1306,6 +1306,10 @@ async function openSiteDetails(site) {
     
     const pagesEl = document.getElementById('detail-pages');
     if (pagesEl) pagesEl.textContent = site.pages_crawled || 0;
+
+    document.querySelectorAll('.detail-total-pages').forEach(element => {
+        element.textContent = site.total_pages || 0;
+    });
     
     const indexedEl = document.getElementById('detail-indexed');
     if (indexedEl) indexedEl.textContent = site.pages_indexed || 0;

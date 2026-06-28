@@ -29,20 +29,27 @@ async def list_sites(user: dict = Depends(require_auth)):
         sites = await db.list_sites(user_id=user_id)
     
     result = []
+    vector_store = get_vector_store()
     for site in sites:
         site_url = site.get("url", "")
+        site_id = site.get("site_id")
         
         job = await db.get_crawl_job_by_url(site_url) if hasattr(db, 'get_crawl_job_by_url') else None
+        total_pages = vector_store.count_unique_metadata_values(
+            "url",
+            {"site_id": site_id}
+        )
         
         job_status = job.get("status") if job else site.get("status", "pending")
         result.append({
-            "site_id": site.get("site_id"),
+            "site_id": site_id,
             "name": site.get("name"),
             "url": site.get("url"),
             "user_id": site.get("user_id"),
             "status": job_status,
             "pages_crawled": job.get("pages_crawled", 0) if job else 0,
             "pages_indexed": job.get("pages_indexed", 0) if job else 0,
+            "total_pages": total_pages,
             "created_at": site.get("created_at"),
             "error": job.get("errors", [])[-1] if job and job_status == "failed" and job.get("errors") else None
         })
@@ -63,6 +70,10 @@ async def get_site(site_id: str, user: dict = Depends(require_auth)):
         raise HTTPException(status_code=403, detail="Access denied")
     
     job = await db.get_crawl_job_by_url(site.get("url", "")) if hasattr(db, 'get_crawl_job_by_url') else None
+    total_pages = get_vector_store().count_unique_metadata_values(
+        "url",
+        {"site_id": site_id}
+    )
     
     return {
         "site_id": site.get("site_id"),
@@ -71,7 +82,8 @@ async def get_site(site_id: str, user: dict = Depends(require_auth)):
         "user_id": site.get("user_id"),
         "status": job.get("status") if job else site.get("status", "pending"),
         "pages_crawled": job.get("pages_crawled", 0) if job else 0,
-        "pages_indexed": job.get("pages_indexed", 0) if job else 0
+        "pages_indexed": job.get("pages_indexed", 0) if job else 0,
+        "total_pages": total_pages
     }
 
 

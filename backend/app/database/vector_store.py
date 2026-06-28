@@ -338,6 +338,28 @@ class VectorStore:
             Document(page_content=doc.page_content, metadata=dict(doc.metadata))
             for doc in documents[:safe_limit]
         ]
+
+    def count_unique_metadata_values(
+        self,
+        field: str,
+        filter: Dict = None,
+    ) -> int:
+        """Count unique metadata values without changing the FAISS docstore."""
+        if not self._initialized:
+            self.initialize()
+
+        docstore = getattr(self.vector_store.docstore, "_dict", {})
+        values = {
+            doc.metadata.get(field)
+            for doc in docstore.values()
+            if (
+                isinstance(doc, Document)
+                and doc.metadata.get("source") != "init"
+                and self._matches_filter(doc, filter)
+                and doc.metadata.get(field)
+            )
+        }
+        return len(values)
     
     def clear_collection(self):
         """Clear all documents from the collection."""
